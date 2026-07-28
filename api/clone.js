@@ -25,8 +25,10 @@ export default async function handler(req, res) {
         text: textToSpeak,
         model_id: "eleven_multilingual_v2",
         voice_settings: {
-          stability: 0.3,
-          similarity_boost: 0.8
+          stability: 0.7,
+          similarity_boost: 0.7,
+          style: 0.2,
+          use_speaker_boost: true
         }
       }),
     });
@@ -44,4 +46,3 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: error.message });
   }
 }
-
