@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     const { text } = req.body || {};
     const textToSpeak = text || "မင်္ဂလာပါ၊ အသံစမ်းသပ်ခြင်း ဖြစ်ပါသည်။";
 
-    const voiceId = "21m00Tcm4TlvDq8ikWAM";
+    const voiceId = "EXAVITQu4vr4xnSDxMaL";
 
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
