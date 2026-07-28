@@ -3,33 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Face-Swap & Coffee Shop</title>
+    <title>AI Text-to-Image Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-amber-50 min-h-screen flex flex-col items-center p-4">
     <div class="max-w-md w-full bg-white rounded-xl shadow-lg p-6">
-        <h1 class="text-2xl font-bold text-center text-amber-900 mb-2">AI Face-Swap Studio</h1>
-        <p class="text-center text-gray-600 mb-4 text-sm">မြန်မာ့ရိုးရာဝတ်စုံနှင့် Ywangan Coffee ပုံစံဖြင့် ဓာတ်ပုံဖန်တီးကြပါစို့</p>
+        <h1 class="text-2xl font-bold text-center text-amber-900 mb-2">AI Text-to-Image Studio</h1>
+        <p class="text-center text-gray-600 mb-4 text-sm">လိုချင်သော ပုံစံကို စာသားဖြင့် ရိုက်ထည့်ပြီး ဖန်တီးပါ</p>
         
-        <!-- Template Preview -->
-        <div class="mb-4 text-center">
-            <p class="text-xs font-semibold text-gray-500 mb-1">ပုံစံခွက် (Template)</p>
-            <img src="template.jpg" alt="Template" class="w-48 h-auto mx-auto rounded-lg shadow-md object-cover">
-        </div>
-
         <div class="mb-4">
-            <label class="block text-gray-700 font-medium mb-1 text-sm">သင့်ဓာတ်ပုံတင်ရန် (Upload Your Photo)</label>
-            <input type="file" id="userPhoto" class="w-full border border-gray-300 rounded-lg p-2 text-sm" accept="image/*">
+            <label class="block text-gray-700 font-medium mb-1 text-sm">ပုံဖော်ရန် စာသား (Enter Prompt)</label>
+            <textarea id="promptInput" rows="3" class="w-full border border-gray-300 rounded-lg p-2 text-sm" placeholder="ဥပမာ - A beautiful Burmese woman holding Ywangan Coffee, cinematic lighting...">A beautiful Burmese woman wearing traditional dress holding Ywangan coffee package, high quality</textarea>
         </div>
 
-        <button onclick="generateFaceSwap()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-lg hover:bg-amber-700 transition shadow">ပုံဖန်တီးမည် (Generate)</button>
+        <button onclick="generateImage()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-lg hover:bg-amber-700 transition shadow">ပုံထုတ်မည် (Generate Image)</button>
         
         <div id="loading" class="text-center text-amber-700 mt-3 hidden font-medium text-sm">AI ဖြင့် ပုံဖန်တီးနေပါပြီ ခဏစောင့်ပါ...</div>
 
         <!-- Result Section -->
         <div id="resultContainer" class="mt-4 text-center hidden">
             <p class="text-sm font-bold text-amber-900 mb-2">ထွက်လာသော ပုံ (Result)</p>
-            <img id="resultImage" class="w-full rounded-lg shadow-md" alt="Result">
+            <img id="resultImage" class="w-full rounded-lg shadow-md" alt="Generated AI Image">
         </div>
 
         <div class="mt-8 border-t pt-4 text-center">
@@ -39,29 +33,36 @@
     </div>
 
     <script>
-        function generateFaceSwap() {
-            const fileInput = document.getElementById('userPhoto');
+        function generateImage() {
+            const promptText = document.getElementById('promptInput').value.trim();
             const loading = document.getElementById('loading');
             const resultContainer = document.getElementById('resultContainer');
             const resultImage = document.getElementById('resultImage');
 
-            if (fileInput.files.length === 0) {
-                alert('ကျေးဇူးပြု၍ ဓာတ်ပုံအရင်တင်ပေးပါ');
+            if (!promptText) {
+                alert('ကျေးဇူးပြု၍ စာသားအရင်ထည့်ပါ။');
                 return;
             }
 
             loading.classList.remove('hidden');
             resultContainer.classList.add('hidden');
 
-            setTimeout(() => {
+            // Pollinations AI URL generation
+            const encodedPrompt = encodeURIComponent(promptText);
+            const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=768&nologo=true`;
+
+            // Preload image to check when it's ready
+            const img = new Image();
+            img.src = imageUrl;
+            img.onload = function() {
+                resultImage.src = imageUrl;
                 loading.classList.add('hidden');
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    resultImage.src = document.querySelector('img').src; 
-                    resultContainer.classList.remove('hidden');
-                }
-                reader.readAsDataURL(fileInput.files[0]);
-            }, 2000);
+                resultContainer.classList.remove('hidden');
+            };
+            img.onerror = function() {
+                loading.classList.add('hidden');
+                alert('ပုံထုတ်ရာတွင် အမှားအယွင်းရှိသွားပါသည်။ ထပ်ကြိုးစားပါ။');
+            };
         }
     </script>
 </body>
